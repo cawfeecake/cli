@@ -93,6 +93,14 @@ func TestNewCmdList(t *testing.T) {
 				Created: ">=2023-04-24",
 			},
 		},
+		{
+			name: "check-suite-id",
+			cli:  "--check-suite-id 42",
+			wants: ListOptions{
+				Limit:        defaultLimit,
+				CheckSuiteId: 42,
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -131,6 +139,7 @@ func TestNewCmdList(t *testing.T) {
 			assert.Equal(t, tt.wants.Status, gotOpts.Status)
 			assert.Equal(t, tt.wants.Event, gotOpts.Event)
 			assert.Equal(t, tt.wants.Created, gotOpts.Created)
+			assert.Equal(t, tt.wants.CheckSuiteId, gotOpts.CheckSuiteId)
 		})
 	}
 }
@@ -472,6 +481,24 @@ func TestListRun(t *testing.T) {
 				reg.Register(
 					httpmock.QueryMatcher("GET", "repos/OWNER/REPO/actions/runs", url.Values{
 						"created": []string{">=2023-04-24"},
+					}),
+					httpmock.JSONResponse(shared.RunsPayload{}),
+				)
+			},
+			wantErr:    true,
+			wantErrMsg: "no runs found",
+		},
+		{
+			name: "check-suite-id filter applied",
+			opts: &ListOptions{
+				Limit:        defaultLimit,
+				CheckSuiteId: 42,
+			},
+			isTTY: true,
+			stubs: func(reg *httpmock.Registry) {
+				reg.Register(
+					httpmock.QueryMatcher("GET", "repos/OWNER/REPO/actions/runs", url.Values{
+						"check-suite-id": []int{42},
 					}),
 					httpmock.JSONResponse(shared.RunsPayload{}),
 				)

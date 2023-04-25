@@ -305,6 +305,7 @@ type FilterOptions struct {
 	Status       string
 	Event        string
 	Created      string
+	CheckSuiteId int
 }
 
 // GetRunsWithFilter fetches 50 runs from the API and filters them in-memory
@@ -355,6 +356,9 @@ func GetRuns(client *api.Client, repo ghrepo.Interface, opts *FilterOptions, lim
 		}
 		if opts.Created != "" {
 			path += fmt.Sprintf("&created=%s", url.QueryEscape(opts.Created))
+		}
+		if opts.CheckSuiteId > 0 {
+			path += fmt.Sprintf("&check_suite_id=%d", url.QueryEscape(opts.CheckSuiteId))
 		}
 	}
 
