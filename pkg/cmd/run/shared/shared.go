@@ -358,7 +358,7 @@ func GetRuns(client *api.Client, repo ghrepo.Interface, opts *FilterOptions, lim
 			path += fmt.Sprintf("&created=%s", url.QueryEscape(opts.Created))
 		}
 		if opts.CheckSuiteId > 0 {
-			path += fmt.Sprintf("&check_suite_id=%d", url.QueryEscape(opts.CheckSuiteId))
+			path += fmt.Sprintf("&check_suite_id=%d", opts.CheckSuiteId)
 		}
 	}
 
